@@ -4,17 +4,20 @@ import hashlib
 from pinecone import Pinecone
 from datetime import date
 
+# Sample Transcript
+from transcript1 import sample_transcript
+
 # Initialize API Keys
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 
 # Retrieve organization name and meeting title from firebase
-index = input("Input organization name")
-namespace = input("Input meeting title")
+organization_name = input("Input organization name: ")
+meeting_title = input("Input meeting title: ")
 
 # Pinecone Initialization
 PC = Pinecone(api_key=PINECONE_API_KEY)
-index = PC.Index(index)
+INDEX = PC.Index(organization_name)
 
 # OpenAI Initialization
 EMBEDDINGS = OpenAIEmbeddings(model='text-embedding-3-small', openai_api_key=OPENAI_API_KEY)
@@ -100,15 +103,18 @@ def upsert_data_to_pinecone(data_with_metadata, namespace):
     """
     Upsert data with metadata into a Pinecone index.
     """
-    index.upsert(vectors=data_with_metadata, namespace=namespace)
+    INDEX.upsert(vectors=data_with_metadata, namespace=namespace)
     print("Upserting vectors to Pinecone: Done!")
 
 # Main Method
-def Pinecone(texts, meeting_title):
-    date=datetime.now().isoformat() # INITIALIZATION FOR DATE (DYNAMIC) BASED ON STORING
-    namespace = 'USJ-R' # NAMESPACE DEFAULTED TO 'USJ-R' FOR ISOLATION (STATIC)
+def Pinecone(texts, organization, meeting_title):
+    date_now = str(date.today()) # INITIALIZATION FOR DATE (DYNAMIC) BASED ON STORING
+    print(date_now)
+    namespace = meeting_title
 
-    chunked_text = chunk_text(texts=texts)
+    chunked_text = chunk_text(text=texts)
     chunked_text_embeddings = generate_embeddings(texts=chunked_text)
-    data_with_meta_data = combine_vector_and_text(texts=chunked_text, meeting_title=meeting_title, date=date,  text_embeddings=chunked_text_embeddings)
+    data_with_meta_data = combine_vector_and_text(texts=chunked_text, meeting_title=organization, date=date_now,  text_embeddings=chunked_text_embeddings)
     upsert_data_to_pinecone(data_with_metadata=data_with_meta_data, namespace_name=namespace)
+
+Pinecone(sample_transcript, organization_name, meeting_title)
