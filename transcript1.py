@@ -1,4 +1,4 @@
-sample_transcript = """Czech: Hello my name is Czech.     
+sample_transcript1 = """Czech: Hello my name is Czech.     
 Gian: Hello my name is Gian.
 Shaundyl: Hello my name is Shaundyl.
 Czech (Team Lead): Alright, everyone, thanks for joining today’s meeting. We have about 10 minutes to go over the final details before the product launch. Let's start with the progress update. Bob, how are we doing on the development front?
